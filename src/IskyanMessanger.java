@@ -30,7 +30,7 @@ public class IskyanMessanger {
     private void startUp(String name) {
         userName = name;
         try {
-            Socket sock = new Socket("192.168.21.95", 4242);
+            Socket sock = new Socket("192.168.2.112", 4242);
             out = new ObjectOutputStream(sock.getOutputStream());
             in = new ObjectInputStream(sock.getInputStream());
             Thread remote = new Thread(new RemoteReader());
@@ -54,7 +54,7 @@ public class IskyanMessanger {
         JScrollPane theList = new JScrollPane(incomingList);
         incomingList.setListData(listVector);
 
-        userMessage = new JTextField();
+        userMessage = new JTextField(20);
         buttonBox.add(userMessage);
 
         JButton send = new JButton("Send");
@@ -66,6 +66,7 @@ public class IskyanMessanger {
         frame.getContentPane().add(background);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setSize(300, 400);
         frame.setVisible(true);
 
     }
