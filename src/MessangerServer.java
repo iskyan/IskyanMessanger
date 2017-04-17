@@ -35,7 +35,7 @@ public class MessangerServer {
         }
     }
 
-    void tellEveryone(Object o) {
+    private void tellEveryone(Object o) {
         for (Object clientOutputStream : clientOutputStreams) {
             try {
                 ObjectOutputStream out = (ObjectOutputStream) clientOutputStream;

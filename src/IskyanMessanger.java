@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.*;
 import java.net.Socket;
 import java.util.Vector;
@@ -30,7 +32,7 @@ public class IskyanMessanger {
     private void startUp(String name) {
         userName = name;
         try {
-            Socket sock = new Socket("192.168.2.112", 4242);
+            Socket sock = new Socket("", 4242);
             out = new ObjectOutputStream(sock.getOutputStream());
             in = new ObjectInputStream(sock.getInputStream());
             Thread remote = new Thread(new RemoteReader());
@@ -55,6 +57,7 @@ public class IskyanMessanger {
         incomingList.setListData(listVector);
 
         userMessage = new JTextField(20);
+        userMessage.addKeyListener(new MyEnterListener());
         buttonBox.add(userMessage);
 
         JButton send = new JButton("Send");
@@ -83,6 +86,32 @@ public class IskyanMessanger {
             userMessage.setText("");
         }
     }
+
+    public class MyEnterListener implements KeyListener {
+
+        @Override
+        public void keyTyped(KeyEvent keyEvent) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent keyEvent) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                try {
+                    out.writeObject(userName + ": " + userMessage.getText());
+                } catch (Exception e) {
+                    System.out.println("Couldn't send it to the server...");
+                }
+                userMessage.setText("");
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent keyEvent) {
+
+        }
+    }
+
     class RemoteReader implements Runnable {
 
         Object obj = null;
