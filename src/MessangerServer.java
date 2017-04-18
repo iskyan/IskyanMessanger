@@ -34,7 +34,7 @@ public class MessangerServer {
                 System.out.println(index + " user connected...");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error: " + e);
         }
     }
 
@@ -44,7 +44,7 @@ public class MessangerServer {
                 ObjectOutputStream out = (ObjectOutputStream) clientOutputStream;
                 out.writeObject(o);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error: " + e);
             }
         }
     }
@@ -59,7 +59,7 @@ public class MessangerServer {
                 clientSocket = socket;
                 in = new ObjectInputStream(clientSocket.getInputStream());
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error: " + e);
             }
         }
 

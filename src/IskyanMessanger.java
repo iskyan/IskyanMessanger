@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -18,6 +22,7 @@ public class IskyanMessanger {
     private JTextField userMessage;
     private JList<String> incomingList;
     private Vector<String> listVector = new Vector<>();
+    private HashMap<String, String> names = new HashMap<>();
     private String userName;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -32,7 +37,7 @@ public class IskyanMessanger {
     private void startUp(String name) {
         userName = name;
         try {
-            Socket sock = new Socket("192.168.43.185", 4242);
+            Socket sock = new Socket("192.168.2.112", 4242);
             out = new ObjectOutputStream(sock.getOutputStream());
             in = new ObjectInputStream(sock.getInputStream());
             Thread remote = new Thread(new RemoteReader());
@@ -53,6 +58,8 @@ public class IskyanMessanger {
 
         Box buttonBox = new Box(BoxLayout.X_AXIS);
         incomingList = new JList<>();
+        incomingList.addListSelectionListener(new MyListSelectionListener());
+        incomingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane theList = new JScrollPane(incomingList);
         incomingList.setListData(listVector);
 
@@ -112,6 +119,32 @@ public class IskyanMessanger {
         }
     }
 
+    public class MyListSelectionListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent listSelectionEvent) {
+            if (!listSelectionEvent.getValueIsAdjusting()) {
+                try {
+                    String selected = incomingList.getSelectedValue();
+                    StringBuilder s = new StringBuilder();
+                    int i = 0;
+                    while (true) {
+                        if (selected.charAt(i) == ':')
+                            break;
+                        s.append(selected.charAt(i));
+                        i++;
+                    }
+                    if (s.length() != 0) {
+                        userMessage.setText(s + ", " + userMessage.getText());
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error: " + e);
+                }
+            }
+        }
+
+    }
+
     class RemoteReader implements Runnable {
 
         Object obj = null;
@@ -121,11 +154,12 @@ public class IskyanMessanger {
             try {
                 while ((obj = in.readObject()) != null) {
                     String nameToShow = (String) obj;
+                    names.put(nameToShow, nameToShow);
                     listVector.add(nameToShow);
                     incomingList.setListData(listVector);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error: " + e);
             }
         }
     }
