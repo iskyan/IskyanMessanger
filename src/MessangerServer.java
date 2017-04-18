@@ -12,6 +12,7 @@ import java.util.Iterator;
 public class MessangerServer {
 
     private ArrayList<ObjectOutputStream> clientOutputStreams;
+    private int index = 0;
 
     public static void main(String[] args) {
         new MessangerServer().go();
@@ -29,6 +30,8 @@ public class MessangerServer {
 
                 Thread t = new Thread(new ClientHandler(clientSocket));
                 t.start();
+                index++;
+                System.out.println(index + " user connected...");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +71,7 @@ public class MessangerServer {
                     tellEveryone(o);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("User left...");
             }
         }
     }

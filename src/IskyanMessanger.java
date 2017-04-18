@@ -32,7 +32,7 @@ public class IskyanMessanger {
     private void startUp(String name) {
         userName = name;
         try {
-            Socket sock = new Socket("", 4242);
+            Socket sock = new Socket("192.168.43.185", 4242);
             out = new ObjectOutputStream(sock.getOutputStream());
             in = new ObjectInputStream(sock.getInputStream());
             Thread remote = new Thread(new RemoteReader());
